@@ -1,19 +1,76 @@
-import type { ReactNode, FC } from 'react';
+import { ReactNode, FC, useState, useEffect, useCallback, useRef } from 'react';
 import { memo } from 'react';
 import Logout from '@/components/logout';
 import { ChatContainerWrapper } from './style';
 import ChatInput from './components/chatInput';
-import ChatMessage from './components/chatMessage';
+import { getAllMessage } from '@/store/chat/chatContainer';
+import { saveMessage } from '@/store/chat/chatContainer/chatInput';
 
 type IProps = {
   children?: ReactNode;
   currentChat: any;
+  currentUser: any;
+  socket: any;
 };
 
-const ChatContainer: FC<IProps> = ({ currentChat }) => {
+const ChatContainer: FC<IProps> = ({ currentChat, currentUser, socket }) => {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [arrivalMessage, setArrivalMessage] = useState<any>(null);
+  const scrollRef = useRef<any>();
+
+  const initMessages = useCallback(async () => {
+    const messages = await getAllMessage(
+      currentUser.username,
+      currentChat.username,
+    );
+    console.log(messages);
+
+    setMessages(messages);
+  }, [currentChat, currentUser]);
+
+  const handleSendMessage = useCallback(
+    async (currentMessage: string) => {
+      const messageData = {
+        message: currentMessage,
+        receiver: currentChat.username,
+        sender: currentUser.username,
+        users: [currentUser.username, currentChat.username],
+      };
+
+      await saveMessage(messageData);
+      socket.current.emit('send-message', messageData);
+      const currentMessages = [...messages];
+      currentMessages.push({ isSelf: true, message: currentMessage });
+      setMessages(currentMessages);
+    },
+    [currentChat.username, currentUser.username, socket, messages],
+  );
+
+  useEffect(() => {
+    initMessages();
+  }, [initMessages]);
+
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on('receive-message', (message: string) => {
+        console.log(message);
+
+        setArrivalMessage({ isSelf: false, message: message });
+      });
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behaviour: 'smooth' });
+  }, [messages]);
+
   return (
     <>
-      {currentChat && (
+      {currentChat && currentUser && (
         <ChatContainerWrapper>
           <div className="chat-header">
             <div className="user-details">
@@ -26,8 +83,24 @@ const ChatContainer: FC<IProps> = ({ currentChat }) => {
             </div>
             <Logout></Logout>
           </div>
-          <ChatMessage></ChatMessage>
-          <ChatInput></ChatInput>
+          <div className="chat-messages">
+            {messages.map((message, index) => {
+              return (
+                <div ref={scrollRef} key={index}>
+                  <div
+                    className={`message ${
+                      message.isSelf ? 'sended' : 'received'
+                    }`}
+                  >
+                    <div className="content">
+                      <p>{message.message}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <ChatInput handleSendMessage={handleSendMessage}></ChatInput>
         </ChatContainerWrapper>
       )}
     </>

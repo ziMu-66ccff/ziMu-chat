@@ -25,14 +25,14 @@ export const ChatInputWrapper = styled.div`
         position: absolute;
         top: -250px;
         height: 220px !important;
-        background-color: #080420;
-        box-shadow: 0 5px 10px #9a86f3;
-        border-color: #9a86f3;
+        background-color: black;
+        box-shadow: 0 5px 10px #191c1e;
+        border-color: #191c1e;
         .epr-body::-webkit-scrollbar {
-          background-color: #080420;
+          background-color: #191c1e;
           width: 5px;
           &-thumb {
-            background-color: #9a86f3;
+            background-color: #727d83;
           }
         }
         .epr-header-overlay {
@@ -55,7 +55,7 @@ export const ChatInputWrapper = styled.div`
 
     input {
       width: 90%;
-      height: 60%;
+      /* height: 60%; */
       background-color: transparent;
       color: white;
       border: none;
