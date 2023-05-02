@@ -40,7 +40,6 @@ const Login: FC<IProps> = () => {
     ],
     [],
   );
-
   const navigate = useNavigate();
   const loginInfoRef = useRef<typeof loginInfo>();
   loginInfoRef.current = loginInfo;

@@ -21,7 +21,7 @@ export function useAvatar() {
   };
 
   const setProfileAvatar = async () => {
-    if (selectedAvatar === 9999) {
+    if (selectedAvatar === 9999) { 
       toast.error('啊咧，你不选择一个头像吗？', toastOptions);
       return;
     }
