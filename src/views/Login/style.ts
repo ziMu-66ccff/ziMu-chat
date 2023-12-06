@@ -10,6 +10,6 @@ export const LoginWrapper = styled.div`
   gap: 1rem;
   justify-content: center;
   align-items: center;
-  background: url(${background}) center;
+  background: url(${background}) no-repeat;
   background-size: 100%;
 `;

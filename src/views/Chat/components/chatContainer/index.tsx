@@ -38,7 +38,7 @@ const ChatContainer: FC<IProps> = ({ currentChat, currentUser, socket }) => {
       };
 
       await saveMessage(messageData);
-      socket.current.emit('send-message', messageData);
+      socket.current.send(messageData);
       const currentMessages = [...messages];
       currentMessages.push({ isSelf: true, message: currentMessage });
       setMessages(currentMessages);
@@ -52,11 +52,11 @@ const ChatContainer: FC<IProps> = ({ currentChat, currentUser, socket }) => {
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.on('receive-message', (message: string) => {
-        console.log(message);
+      socket.current.onmessage = (res: any) => {
+        console.log(res.data);
 
-        setArrivalMessage({ isSelf: false, message: message });
-      });
+        setArrivalMessage({ isSelf: false, message: res.data });
+      };
     }
   }, [socket]);
 

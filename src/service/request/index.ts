@@ -25,17 +25,21 @@ class ZMRequest {
     this.instance.interceptors.request.use(
       (config) => {
         // loading/token
+        console.log('所有实列都有的请求拦截器，成功');
         return config;
       },
       (err) => {
+        console.log('所有实列都有的请求拦截器，失败');
         throw err;
       },
     );
     this.instance.interceptors.response.use(
       (res) => {
+        console.log('所有实列都有的响应拦截器，成功');
         return res.data;
       },
       (err) => {
+        console.log('所有实列都有的响应拦截器，失败');
         throw err;
       },
     );

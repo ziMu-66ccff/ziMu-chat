@@ -14,7 +14,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', // 凡是遇到 /api 路径的请求，都映射到 target 属性
+        target: 'https://o6r6fe.laf.run', // 凡是遇到 /api 路径的请求，都映射到 target 属性
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''), // 重写 api 为 空，就是去掉它
       },

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ChatContainer from './components/chatContainer';
 import Contacts from './components/contacts';
 import Welcome from './components/welcome';
+import WebSocket from 'isomorphic-ws';
 import { io, Socket } from 'socket.io-client';
 import { ChatWrapper } from './style';
 
@@ -26,7 +27,8 @@ const Chat: FC<IProps> = () => {
   const [currentChat, setCurrentChat] = useState<any>();
   const [currentUser, setCurrentUser] = useState<any>();
   const navigate = useNavigate();
-  const socket = useRef<Socket<ServerToClientEvents, ClientToServerEvents>>();
+  // const socket = useRef<Socket<ServerToClientEvents, ClientToServerEvents>>();
+  const wss = useRef<WebSocket>();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('userInfo') ?? 'null');
@@ -44,8 +46,12 @@ const Chat: FC<IProps> = () => {
 
   useEffect(() => {
     if (currentUser) {
-      socket.current = io('http://localhost:2999');
-      socket.current.emit('add-user', currentUser.username);
+      // socket.current = io('http://localhost:2999');
+      // socket.current.emit('add-user', currentUser.username);
+      wss.current = new WebSocket('ws://o6r6fe.laf.run/_websocket_');
+      wss.current.onopen = () => {
+        wss.current?.send(currentUser.username);
+      };
     }
   }, [currentUser]);
 
@@ -67,7 +73,7 @@ const Chat: FC<IProps> = () => {
           <ChatContainer
             currentChat={currentChat}
             currentUser={currentUser}
-            socket={socket}
+            socket={wss}
           ></ChatContainer>
         ) : (
           <Welcome currentUser={currentUser}></Welcome>
