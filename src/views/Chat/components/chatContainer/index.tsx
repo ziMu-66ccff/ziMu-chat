@@ -23,8 +23,6 @@ const ChatContainer: FC<IProps> = ({ currentChat, currentUser, socket }) => {
       currentUser.username,
       currentChat.username,
     );
-    console.log(messages);
-
     setMessages(messages);
   }, [currentChat, currentUser]);
 
@@ -38,7 +36,8 @@ const ChatContainer: FC<IProps> = ({ currentChat, currentUser, socket }) => {
       };
 
       await saveMessage(messageData);
-      socket.current.send(messageData);
+      socket.current?.send(JSON.stringify(messageData));
+      // socket.current?.send('hi');
       const currentMessages = [...messages];
       currentMessages.push({ isSelf: true, message: currentMessage });
       setMessages(currentMessages);
@@ -53,8 +52,7 @@ const ChatContainer: FC<IProps> = ({ currentChat, currentUser, socket }) => {
   useEffect(() => {
     if (socket.current) {
       socket.current.onmessage = (res: any) => {
-        console.log(res.data);
-
+        console.log(res.data, 'message');
         setArrivalMessage({ isSelf: false, message: res.data });
       };
     }

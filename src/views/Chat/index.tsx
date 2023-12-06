@@ -48,7 +48,7 @@ const Chat: FC<IProps> = () => {
     if (currentUser) {
       // socket.current = io('http://localhost:2999');
       // socket.current.emit('add-user', currentUser.username);
-      wss.current = new WebSocket('ws://o6r6fe.laf.run/_websocket_');
+      wss.current = new WebSocket('wss://o6r6fe.laf.run/__websocket__');
       wss.current.onopen = () => {
         wss.current?.send(currentUser.username);
       };
